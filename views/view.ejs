@@ -1,7 +1,7 @@
 <%- include("partials/header.ejs") %>
 
-<h1>Edit Blog</h1>
 
+<% if (!isLogToView) { %>
     <% if (locals.blogs) { %> <%# when code in here it can be send request to JS %>
      
         <div class="blog-div">
@@ -11,13 +11,23 @@
         </div>
     <% } %>
 
+    <%# FORM GET METHOD %>
+    <form action="get" method="get">
+        <input type="submit" value="Update Post" formaction="/edit/<%= currentBlog %>">
+    </form>
 
-<form action="/post" method="post">
-    <input type="text" name="title" id="" value="<%= blogs.title %>">
-    <input type="text" name="content" id="" value="<%= blogs.content %>">
-    <input type="submit" value="Update Post" formaction="/patch-blog">
-    <input type="submit" value="Delete Post" formaction="/delete-blog">
-</form>
+    <%# FORM POST METHOD %>
+    <form action="/post" method="post">
+        <input type="submit" value="Delete Post" formaction="/delete-blog">
+    </form>
+<% } else {%>
 
+    <form action="/post" method="post">
+        <input type="text" name="title" id="" value="<%= blogs.title %>">
+        <input type="text" name="content" id="" value="<%= blogs.content %>">
+        <input type="submit" value="Update Post" formaction="/patch-blog">
+        <input type="submit" value="Delete Post" formaction="/delete-blog">
+    </form>
 
+<% } %>
 <%- include("partials/footer.ejs") %>
