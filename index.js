@@ -76,7 +76,12 @@ app.get("/edit/:id", (req, res) => {
 //
 app.post("/create", (req, res) => {
     res.render("create");
-})
+});
+
+//
+app.get("/create", (req, res) => {
+    res.render("create");
+});
 
 //create blog
 app.post("/post-blog", (req, res) => {
