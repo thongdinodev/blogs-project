@@ -1,0 +1,21 @@
+<%- include("partials/header.ejs") %>
+
+<h1>My Blog Project</h1>
+
+
+<% if (locals.blogs) { %>
+    <% blogs.forEach((blog, index) => { %>   
+        <div class="blog-div">
+            <a href="/view/<%= index %> %>" >
+               <h2>Title: <%= blog.title %></h2>
+            </a>
+            <p>Content: <%= blog.content %></p>
+            <p>Date: <%= blog.date %></p>
+        </div>
+<% })} %>
+    <form action="/post" method="post">
+        <input type="submit" value="Create Post" formaction="/create">
+    </form>
+
+
+<%- include("partials/footer.ejs") %>
