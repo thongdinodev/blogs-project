@@ -1,21 +1,48 @@
 <%- include("partials/header.ejs") %>
 
-<h1>My Blog Project</h1>
 
-
-<% if (locals.blogs) { %>
-    <% blogs.forEach((blog, index) => { %>   
-        <div class="blog-div">
-            <a href="/view/<%= index %> %>" >
-               <h2>Title: <%= blog.title %></h2>
-            </a>
-            <p>Content: <%= blog.content %></p>
-            <p>Date: <%= blog.date %></p>
+    <!-- MAIN SESSION -->
+    <div class="main-container">
+        
+        <div class="main-cl">
+            <% if (locals.blogs) { %>
+                <% blogs.forEach((blog, index) => { %>   
+                    <div id="main">
+                        <div class="main-title">
+                            <a href="/view/<%= index %> %>" >
+                                <%= blog.title %>
+                            </a>
+                        </div>
+                        <p class="content"><%= blog.content %></p>
+                        <p>Date: <%= blog.date %></p>
+                    </div>
+                    <hr>
+            <% })} %>
         </div>
-<% })} %>
-    <form action="/post" method="post">
-        <input type="submit" value="Create Post" formaction="/create">
-    </form>
+                    <!-- CREATE BLOG SIDE -->
+    <div id="create">
+        <div class="create-post-btn">
+            <form action="/post" method="post">
+                <input type="submit" value="Create Blog" formaction="/create" class="input-post">
+                
+            </form>
+        </div>
+
+        <p style="text-transform: uppercase">Recent Blogs</p>
+
+        <% if (locals.blogs) { %>
+            <% blogs.forEach((blog, index) =>  {%>
+                <div class="create-a">
+
+                    <a href="/view/<%= index %>" style="font-size: 16px;">
+                        <%= blog.title %>
+                    </a>
+                </div>
+                <hr>
+        <% })} %>
+        
+    </div>
+</div>
 
  
 <%- include("partials/footer.ejs") %>

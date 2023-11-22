@@ -13,20 +13,20 @@
 
     <%# FORM GET METHOD %>
     <form action="get" method="get">
-        <input type="submit" value="Update Post" formaction="/edit/<%= currentBlog %>">
+        <input type="submit" value="Update Post" formaction="/edit/<%= currentBlog %>" class="input-post">
     </form>
 
     <%# FORM POST METHOD %>
     <form action="/post" method="post">
-        <input type="submit" value="Delete Post" formaction="/delete-blog">
+        <input type="submit" value="Delete Post" formaction="/delete-blog" class="input-post">
     </form>
 <% } else {%>
 
     <form action="/post" method="post">
         <input type="text" name="title" id="" value="<%= blogs.title %>">
         <input type="text" name="content" id="" value="<%= blogs.content %>">
-        <input type="submit" value="Update Post" formaction="/patch-blog">
-        <input type="submit" value="Delete Post" formaction="/delete-blog">
+        <input type="submit" value="Update Post" formaction="/patch-blog" class="input-post">
+        <input type="submit" value="Delete Post" formaction="/delete-blog" class="input-post">
     </form>
 
 <% } %>
