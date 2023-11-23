@@ -1,33 +1,69 @@
 <%- include("partials/header.ejs") %>
 
+<%# VIEW AND EDIT IN 1 FILE, IF CONDITION TO RENDER VIEW OR EDIT %>
+
 
 <% if (!isLogToView) { %>
     <% if (locals.blogs) { %> <%# when code in here it can be send request to JS %>
-     
-        <div class="blog-div">
-            <p>Title: <%= blogs.title %></p>
-            <p>Content: <%= blogs.content %></p>     
-            <p>Date: <%= blogs.date %></p>
+        <div class="main-container" style="grid-template-columns: 6fr 1.5fr;">
+        <%# Title session %>
+            <div class="main-cl">
+                
+                    <p class="size-30"><%= blogs.title %></p>
+                    <p class="font-arial content"><%= blogs.content %></p>  
+                    
+                    <!-- HIDDEN BUTTON SESSION-->
+                        <div id="create" style="height: 200px;padding: 16px;letter-spacing: 1px; margin: 0;" class="hidden-btn">
+                            <%# FORM GET METHOD %>
+                            <form action="get" method="get">
+                                <input type="submit" value="Update Post" formaction="/edit/<%= currentBlog %>" class="input-post">
+                            </form>
+                        
+                            <%# FORM POST METHOD %>
+                            <form action="/post" method="post">
+                                <input type="submit" value="Delete Post" formaction="/delete-blog" class="input-post delete-btn">
+                            </form>                      
+                        </div>
+                    <!-- END HIDDEN BUTTON -->
+
+            </div>
+            
+        <%# button session %>
+            <div id="create" style="height: 200px;padding: 16px;letter-spacing: 1px;">
+                <%# FORM GET METHOD %>
+                <form action="get" method="get">
+                    <input type="submit" value="Update Post" formaction="/edit/<%= currentBlog %>" class="input-post">
+                </form>
+            
+                <%# FORM POST METHOD %>
+                <form action="/post" method="post">
+                    <input type="submit" value="Delete Post" formaction="/delete-blog" class="input-post delete-btn">
+                </form>                      
+            </div>
+            
+</div>
+        <% } %>
+<%# =============== DISPLAY EDIT PAGE ===============%>   
+    <% } else {%>
+
+        <div class="main-container main-container-view" style="grid-template-columns: auto;">
+        
+            <div class="main-cl">
+        
+                <h1>Edit Blog</h1>
+        
+                <form action="post" method="post" >
+                    <input type="text" name="title" id="" value="<%= blogs.title %>" class="input-create-title form-control font-arial" required style="font-size: 20px;">
+                    <textarea name="content" id="" cols="30" rows="10" class="input-create-content form-control font-arial" required style="font-size: 20px;"><%= blogs.content %></textarea>
+                    <input type="submit" value="Save change" formaction="/patch-blog" class="input-post" style="float: right;">
+                    
+
+
+                </form>
+            </div>
+
         </div>
+    
     <% } %>
 
-    <%# FORM GET METHOD %>
-    <form action="get" method="get">
-        <input type="submit" value="Update Post" formaction="/edit/<%= currentBlog %>" class="input-post">
-    </form>
-
-    <%# FORM POST METHOD %>
-    <form action="/post" method="post">
-        <input type="submit" value="Delete Post" formaction="/delete-blog" class="input-post">
-    </form>
-<% } else {%>
-
-    <form action="/post" method="post">
-        <input type="text" name="title" id="" value="<%= blogs.title %>">
-        <input type="text" name="content" id="" value="<%= blogs.content %>">
-        <input type="submit" value="Update Post" formaction="/patch-blog" class="input-post">
-        <input type="submit" value="Delete Post" formaction="/delete-blog" class="input-post">
-    </form>
-
-<% } %>
 <%- include("partials/footer.ejs") %>

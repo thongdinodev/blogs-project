@@ -9,11 +9,11 @@
                 <% blogs.forEach((blog, index) => { %>   
                     <div id="main">
                         <div class="main-title">
-                            <a href="/view/<%= index %> %>" >
+                            <a href="/view/<%= index %> %>" class="size-30">
                                 <%= blog.title %>
                             </a>
                         </div>
-                        <p class="content"><%= blog.content %></p>
+                        <p class="content font-arial"><%= blog.content %></p>
                         <p>Date: <%= blog.date %></p>
                     </div>
                     <hr>
