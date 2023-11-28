@@ -1,79 +1,52 @@
 import express from "express";
 import ejs from "ejs";
 import bodyParser from "body-parser";
+import pg from "pg";
 
 const app = express();
 const port = 3000;
 
-//Declare global varaiable
-let blogs = [];
+const db = new pg.Client({
+    user: "postgres",
+    host: "localhost",
+    database: "project",
+    password: "123456",
+    port: 5432,
+  });
+  db.connect();
+
+// //Declare global varaiable
+let currentId;
 let currentBlog;
 let isLogToView = false;
 
+// Use engine, public and bodyparser
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// blog constructor
-const Blog = function (title, content) {
-    this.title = title;
-    this.content = content;
-    this.rawDate = new Date();
-    this.date = this.rawDate.toLocaleString();
+//FUNCTION 
+async function getCurrentDay() {
+    const d = new Date();
+    const date = d.toLocaleString();
+    return date;
 };
 
-//FUNCTION
-
-// add blog 
-const addBlog = function (title, content) {
-    const newBlog = new Blog(title, content);
-    blogs.push(newBlog);
-};
-
-// delete blog
-const deleteBlog = function (index) {
-    blogs.splice(index, 1);
-};
-
-// update blog 
-const updateBlog = function (index, newTitle, newContent) {
-    blogs[index].title = newTitle;
-    blogs[index].content = newContent;
-    const newRawDate = new Date();
-    blogs[index].date = newRawDate.toLocaleString();
-};
-
-
+async function getBlogs() {
+    const result = await db.query("SELECT * FROM blogs ORDER BY id ASC");
+    let blogs = [];
+    result.rows.forEach((blog) => blogs.push(blog));
+    return blogs;
+}
 ////////////////////// GET, POST //////////////////////
-app.get("/", (req, res) => {
+
+//  GET ALL BLOGS, SHOW ALL
+app.get("/", async (req, res) => {
+    const blogs = await getBlogs();
     res.render("index", {blogs: blogs});
 });
 
-// GET specific Blog view and edit
-//VIEW
-app.get("/view/:id", (req, res) => {
-    const id = parseInt(req.params.id);
-    currentBlog = id;
-    isLogToView = false;
-    res.render("view", {
-        blogs: blogs[id],
-        isLogToView: isLogToView,
-        currentBlog: currentBlog
-    });
-});
-
-//UPDATE
-app.get("/edit/:id", (req, res) => {
-    const id = parseInt(req.params.id);
-    currentBlog = id;
-    isLogToView = true;
-    res.render("view", {
-        blogs: blogs[id],
-        isLogToView: isLogToView
-    });
-});
-
-//
+//POST BLOG PAGE
 app.post("/create", (req, res) => {
     res.render("create");
 });
@@ -84,27 +57,81 @@ app.get("/create", (req, res) => {
 });
 
 //create blog
-app.post("/post-blog", (req, res) => {
-    addBlog(req.body.title, req.body.content);
-    res.redirect("/");
+app.post("/post-blog", async (req, res) => {
+    const inputTitle = req.body.title;
+    const inputContent = req.body.content;
+    const date = await getCurrentDay();
+    try {
+        await db.query("INSERT INTO blogs (title, content, date) VALUES ($1, $2, $3)", [inputTitle, inputContent, date]);
+        res.redirect("/");
+    } catch (error) {
+        console.log(error);
+    }
 });
 
+
+// GET specific Blog view and edit
+//VIEW
+app.get("/view/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    currentBlog = id;
+    isLogToView = false;
+    const blogs = await getBlogs();
+
+    currentId = blogs[id].id; // set user current
+
+    res.render("view", {
+        blogs: blogs[id],
+        isLogToView: isLogToView,
+        currentBlog: currentBlog
+    });
+});
+
+
+
+//UPDATE
+app.get("/edit/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    currentBlog = id;
+    isLogToView = true;
+
+    const blogs = await getBlogs();
+    res.render("view", {
+        blogs: blogs[id],
+        isLogToView: isLogToView
+    });
+});
+
+// //
+
 //update blog
-app.post("/patch-blog", (req, res) => {
-    updateBlog(currentBlog, req.body.title, req.body.content);
-    res.redirect("/");
+app.post("/patch-blog", async (req, res) => {
+    
+    const updateTitle = req.body.title;
+    const updateContent = req.body.content;
+    const updateDate = await getCurrentDay();
+    const updateId = currentId;
+    console.log(updateId);
+    try {
+        await db.query("UPDATE blogs SET title = $1, content = $2, date = $3 WHERE id = $4",[updateTitle, updateContent, updateDate, updateId]);
+        res.redirect("/");
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 //delete blog
-app.post("/delete-blog", (req, res) => {
-    deleteBlog(currentBlog);
-    res.redirect("/");
+app.post("/delete-blog", async (req, res) => {
+    const deleteId = currentId;
+    try {
+        await db.query("DELETE FROM blogs WHERE id = $1", [deleteId]);
+        res.redirect("/");
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 app.listen(port, () => {
-    addBlog("I Tried to Impress my Date with my Culinary Skills, and I Burned Water", "Hey fellow foodies, gather 'round for a tale of culinary calamity that would make Gordon Ramsay shed a tear. So, picture this: a romantic dinner date with my crush, a beautifully set table, candles, and soft music playing in the background. I decided to take charge of the kitchen and show off my alleged culinary skills, thinking I'd impress my date with a homemade meal. What could go wrong, right? As we embarked on this culinary adventure, I decided to start with something easy - boiling water for pasta. Sounds foolproof, doesn't it? But it turns out, I have a knack for defying the odds.");
-    addBlog("I Pretended to Be a Penguin on a Job Interview - Now I'm the New Zoo Attraction", "Hello, my adoring fans! Allow me to regale you with the audacious tale of how my penguin impersonation turned me into the zoo's most celebrated attraction. One day, in a moment of pure genius, I transformed into the charismatic Penguin Pretender. I walked into the zoo, flaunting my exceptional penguin moves, honks, and all. The interview panel was dumbstruck, offering me a job right then and there. Fast forward to today, I'm the star of the show! My skills as the dazzling Penguin Pretender are unrivaled, drawing crowds from all over. I have a VIP enclosure, a daily 'Penguin Spectacle,' and a fervent fan following. My message to you? Dare to be extraordinary, and let your talents shine.");
     console.log(`Server is running on port ${port}`);
 });
 
-//get all, get specific, post, update, delete
