@@ -1,7 +1,7 @@
-import express from "express";
-import ejs from "ejs";
-import bodyParser from "body-parser";
-import mongoose from "mongoose";
+const express = require("express") ;
+const ejs = require("ejs") ;
+const bodyParser = require("body-parser") ;
+const mongoose = require("mongoose");
 
 const app = express();
 const port = 3000;
