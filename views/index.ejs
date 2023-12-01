@@ -8,11 +8,12 @@
             <% if (locals.blogs) { %>
                 <% blogs.forEach((blog, index) => { %>   
                     <div id="main">
+                        <form action="/view/<%= index %>" method="post">
                         <div class="main-title">
-                            <a href="/view/<%= index %> %>" class="size-30"">
-                                <%= blog.title %>
-                            </a>
+                            <button class="size-30 btn-title-link"><%= blog.title %></button>   
+                            <input type="hidden" name="blogId" value="<%= blog._id %>">
                         </div>
+                        </form>
                         <p class="content font-arial"><%= blog.content %></p>
                         <p>Date: <%= blog.date %></p>
                     </div>
@@ -33,10 +34,11 @@
         <% if (locals.blogs) { %>
             <% blogs.forEach((blog, index) =>  {%>
                 <div class="create-a">
-
-                    <a href="/view/<%= index %>" style="font-size: 16px;">
-                        <%= blog.title %>
-                    </a>
+                    <form action="/view/<%= index %>" method="post">
+                        <button class="btn-title-link" style="font-size: 16px; text-decoration: none;line-height: 1.7rem;"><%= blog.title %></button>
+                          
+                        <input type="hidden" name="blogId" value="<%= blog._id %>">
+                    </form>
                 </div>
                 <hr>
         <% })} %>

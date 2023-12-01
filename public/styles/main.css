@@ -69,6 +69,7 @@ a:hover {
     color: #88939b;
 }
 
+
 h2 {
     padding: 10px 0;
 }
@@ -155,6 +156,21 @@ h3 {
 
 .size-30 {
     font-size: 30px;
+}
+
+.btn-title-link {
+    text-align: left;
+    background-color: #1A1A1B;
+    color: #D6D9DB;padding: 0;
+    border: none;
+    background: none; 
+    text-decoration: underline;
+    font-family: 'PT Serif Caption';
+    cursor: pointer;
+}
+
+.btn-title-link:hover {
+    color: #88939b;
 }
 
 .pl-20 {
