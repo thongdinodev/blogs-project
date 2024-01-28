@@ -37,7 +37,7 @@ exports.getAllBlogs = async (req, res) => {
             });
             res.redirect("/");
         }
-        res.render("index", { blogs: foundBlogs});
+        res.render("index.ejs", { blogs: foundBlogs});
     }).catch((err) => {
         console.log(err);
     });
