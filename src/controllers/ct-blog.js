@@ -1,9 +1,9 @@
 const Blog = require('../models/blog');
 
 // //Declare global varaiable
-let idBlogCurrent;
+let idBlogCurrent; // to know blog current is viewed and go to exactly edit blog 
 let currentBlog;
-let isLogToView = false;
+let isLogToView = false; // check is viewing or not for going to edit page
 
 // Default data
 const blog1 = new Blog({
@@ -27,8 +27,8 @@ function getCurrentDay() {
     return date;
 };
 
-exports.getAllBlogs = (req, res) => {
-    Blog.find({}).then((foundBlogs) => {
+exports.getAllBlogs = async (req, res) => {
+    await Blog.find({}).then((foundBlogs) => {
         if (foundBlogs.length === 0) {
             Blog.insertMany(defaultBlogs).then(() => {
                 console.log("Successfully to add default blogs");
@@ -43,28 +43,46 @@ exports.getAllBlogs = (req, res) => {
     });
 };
 
-exports.getSpecificViewBlog = (req, res) => {
+exports.getSpecificViewBlog = async (req, res) => {
     const id = parseInt(req.params.id);
+    console.log(req.params);
     currentBlog = id;
     isLogToView = false;
     const searchId = req.body.blogId;
-    idBlogCurrent = req.body.blogId;
-
-    Blog.findById(searchId).then((blogFound) => {
+    idBlogCurrent = req.body.blogId; 
+    
+    if (searchId) {
+        await Blog.findById(searchId).then((blogFound) => {
+            console.log(idBlogCurrent);
         res.render("view", {
             blogs: blogFound,
             isLogToView: isLogToView,
             currentBlog: currentBlog
+        })
+        }).catch((e) => {
+            console.log(e);
         });
-    });
+    } else {
+        await Blog.find({}).then((blogFound) => {
+            res.render("view", {
+                blogs: blogFound[id],
+                isLogToView: isLogToView,
+                currentBlog: currentBlog
+            
+        });
+        }).catch((e) => {
+            console.log(e);
+        });
+    }
 }
 
-exports.getSpecificEditBlog = (req, res) => {
+exports.getSpecificEditBlog = async (req, res) => {
     const id = parseInt(req.params.id);
     currentBlog = id;
     isLogToView = true;
 
-    Blog.findById(idBlogCurrent).then((blogFound) => {
+    await Blog.findById(idBlogCurrent).then((blogFound) => {
+        console.log(idBlogCurrent);
         res.render("view", {
             blogs: blogFound,
             isLogToView: isLogToView
@@ -78,7 +96,7 @@ exports.getCreateBlog = (req, res) => {
     res.render("create");
 };
 
-exports.postCreateBlog = (req, res) => {
+exports.postCreateBlog = async (req, res) => {
     const inputTitle = req.body.title;
     const inputContent = req.body.content;
     const date = getCurrentDay();
@@ -89,17 +107,21 @@ exports.postCreateBlog = (req, res) => {
         date: getCurrentDay()
     });
 
-    newBlog.save();
+    await newBlog.save().then((blog) => {
+        console.log('Successfully to add a new blog');
+    }).catch((e) => {
+        console.log(e);
+    });
     res.redirect("/");
 };
 
-exports.updateBlog = (req, res) => {
+exports.updateBlog = async (req, res) => {
     
     const updateTitle = req.body.title;
     const updateContent = req.body.content;
     const updateDate = getCurrentDay();
     
-    Blog.findByIdAndUpdate(idBlogCurrent, {$set: {title: updateTitle, content: updateContent, date: updateDate}}).then(() => {
+    await Blog.findByIdAndUpdate(idBlogCurrent, {$set: {title: updateTitle, content: updateContent, date: updateDate}}).then(() => {
         console.log("Successfully to update blog with id: " + idBlogCurrent);
         res.redirect("/");
     }).catch((err) => {
@@ -107,8 +129,8 @@ exports.updateBlog = (req, res) => {
     });
 };
 
-exports.deleteBlog = (req, res) => {
-    Blog.findByIdAndDelete(idBlogCurrent).then((blogFound) => {
+exports.deleteBlog = async (req, res) => {
+    await Blog.findByIdAndDelete(idBlogCurrent).then((blogFound) => {
         console.log("Delete blog successfully, blog id: " + blogFound._id);
         res.redirect("/");
     }).catch((err) => {

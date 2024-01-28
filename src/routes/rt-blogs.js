@@ -8,6 +8,7 @@ const errorPage = require('../controllers/error')
 
 router.get("/", blogControllers.getAllBlogs);
 router.post("/view/:id", blogControllers.getSpecificViewBlog);
+router.get("/view/:id", blogControllers.getSpecificViewBlog);
 router.get("/edit/:id", blogControllers.getSpecificEditBlog);
 router.post("/create", blogControllers.getCreateBlog);
 router.get("/create", blogControllers.getCreateBlog);
