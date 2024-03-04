@@ -1,4 +1,5 @@
 require("./db/mongoose");
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
@@ -6,7 +7,7 @@ const path = require("path");
 const blogRoutes = require('./routes/rt-blogs');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 // Use engine, public and bodyparser
 app.set("view engine", "ejs");

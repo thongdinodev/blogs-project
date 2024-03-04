@@ -1,4 +1,5 @@
+require('dotenv').config()
 const mongoose = require('mongoose');
 
-mongoose.connect("mongodb+srv://admin-thong:Test123@cluster0.rzln4di.mongodb.net/blogsDB").then(() => console.log( 'Database Connected' ))
+mongoose.connect(process.env.MONGODB_URL).then(() => console.log( 'Database Connected' ))
 .catch(err => console.log( err ));
